@@ -1,8 +1,14 @@
 <template>
   <div class="home-container">
-    <!-- 动态粒子背景层 -->
-    <div class="particles-container">
-      <div v-for="i in 50" :key="i" class="particle" :style="getParticleStyle(i)"></div>
+    <!-- 微弱的下雪粒子效果 -->
+    <div class="snow-container">
+      <div v-for="i in 100" :key="'snow-'+i" class="snow-particle" :style="getSnowStyle(i)"></div>
+    </div>
+
+    <!-- 雾气效果 -->
+    <div class="fog-container">
+      <div class="fog-layer fog-layer-1"></div>
+      <div class="fog-layer fog-layer-2"></div>
     </div>
 
     <!-- 游戏标题 -->
@@ -14,29 +20,32 @@
     
     <!-- 菜单按钮组 -->
     <div class="menu-buttons">
-      <n-button 
-        type="primary" 
-        size="large" 
+      <n-button
+        type="primary"
+        size="large"
         class="menu-btn start-btn"
         @click="startGame"
+        @mouseenter="playHoverSound"
       >
         开始游戏
       </n-button>
       
-      <n-button 
-        type="warning" 
-        size="large" 
+      <n-button
+        type="warning"
+        size="large"
         class="menu-btn"
         @click="openShop"
+        @mouseenter="playHoverSound"
       >
         商店
       </n-button>
       
-      <n-button 
-        type="info" 
-        size="large" 
+      <n-button
+        type="info"
+        size="large"
         class="menu-btn"
         @click="openCredits"
+        @mouseenter="playHoverSound"
       >
         致谢名单
       </n-button>
@@ -58,7 +67,7 @@ const startGame = () => {
 
 // 打开商店
 const openShop = () => {
-  message.warning('商店功能正在装修中...')
+  router.push('/shop')
 }
 
 // 打开致谢名单
@@ -66,26 +75,68 @@ const openCredits = () => {
   message.info('制作人：Kilo Code\n感谢游玩！')
 }
 
-// 生成随机粒子样式
-const getParticleStyle = (index: number) => {
-  const size = Math.random() * 5 + 2; // 2px - 7px
+// 播放像素风格的悬停音效 (使用 Web Audio API 动态生成)
+let audioCtx: AudioContext | null = null;
+
+const playHoverSound = async () => {
+  try {
+    // 尝试在鼠标悬停时直接初始化和恢复音频上下文
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    
+    if (audioCtx.state === 'suspended') {
+      await audioCtx.resume();
+    }
+
+    // 如果浏览器严格限制，resume 后状态仍为 suspended，则放弃播放，避免报错
+    if (audioCtx.state === 'suspended') return;
+    
+    const osc = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    // 改为更柔和的三角波 (triangle)，适合 UI 悬停，之前的方波留给子弹
+    osc.type = 'triangle';
+    
+    // 频率设置：短促的轻微 "滴" 声，频率上升
+    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.03);
+
+    // 音量控制：非常轻柔，快速衰减
+    gainNode.gain.setValueAtTime(0.02, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+
+    // 连接节点并播放
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.03);
+  } catch (e) {
+    console.warn('音效播放失败', e);
+  }
+}
+
+// 生成随机雪花粒子样式
+const getSnowStyle = (index: number) => {
+  const size = Math.random() * 3 + 1; // 1px - 4px，雪花比较小
   const left = Math.random() * 100; // 0% - 100%
-  const duration = Math.random() * 10 + 5; // 5s - 15s
-  const delay = Math.random() * 5; // 0s - 5s
-  const opacity = Math.random() * 0.5 + 0.2; // 0.2 - 0.7
+  const duration = Math.random() * 10 + 10; // 10s - 20s，下落速度较慢
+  const delay = Math.random() * 10; // 0s - 10s
+  const opacity = Math.random() * 0.4 + 0.1; // 0.1 - 0.5，微弱的效果
 
   return {
     width: `${size}px`,
     height: `${size}px`,
     left: `${left}%`,
     animationDuration: `${duration}s`,
-    animationDelay: `${delay}s`,
+    animationDelay: `-${delay}s`, // 使用负数延迟让雪花一开始就分布在屏幕各处
     opacity: opacity,
-    // 随机颜色：偏红/紫/金，符合吸血鬼幸存者风格
-    backgroundColor: `hsl(${Math.random() * 60 + 300}, 80%, 60%)`,
-    boxShadow: `0 0 ${size * 2}px hsl(${Math.random() * 60 + 300}, 80%, 60%)`
+    backgroundColor: '#ffffff',
+    boxShadow: `0 0 ${size}px rgba(255, 255, 255, 0.8)`
   }
 }
+
 </script>
 
 <style scoped>
@@ -107,8 +158,48 @@ const getParticleStyle = (index: number) => {
   overflow: hidden;
 }
 
-/* 动态粒子背景 */
-.particles-container {
+/* 雾气效果 */
+.fog-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.fog-layer {
+  position: absolute;
+  width: 200%;
+  height: 100%;
+  background: transparent url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png') repeat-x;
+  background-size: cover;
+  opacity: 0.3;
+}
+
+.fog-layer-1 {
+  animation: fogMove 60s linear infinite;
+}
+
+.fog-layer-2 {
+  background-image: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog2.png');
+  animation: fogMove 40s linear infinite;
+  opacity: 0.2;
+}
+
+@keyframes fogMove {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* 下雪粒子效果 */
+.snow-container {
   position: absolute;
   top: 0;
   left: 0;
@@ -118,27 +209,22 @@ const getParticleStyle = (index: number) => {
   z-index: 1;
 }
 
-.particle {
+.snow-particle {
   position: absolute;
-  bottom: -10px;
+  top: -10px;
   border-radius: 50%;
-  animation: floatUp linear infinite;
+  animation: fallDown linear infinite;
 }
 
-@keyframes floatUp {
+@keyframes fallDown {
   0% {
-    transform: translateY(0) scale(1);
-    opacity: 0;
+    transform: translateY(0) translateX(0);
   }
-  10% {
-    opacity: var(--opacity, 0.5);
-  }
-  90% {
-    opacity: var(--opacity, 0.5);
+  50% {
+    transform: translateY(50vh) translateX(20px);
   }
   100% {
-    transform: translateY(-100vh) scale(0.5);
-    opacity: 0;
+    transform: translateY(100vh) translateX(-20px);
   }
 }
 

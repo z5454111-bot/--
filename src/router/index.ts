@@ -13,6 +13,12 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Game',
     // 懒加载游戏组件
     component: () => import('../views/Game.vue')
+  },
+  {
+    path: '/shop',
+    name: 'Shop',
+    // 懒加载商店组件
+    component: () => import('../views/Shop.vue')
   }
 ]
 
