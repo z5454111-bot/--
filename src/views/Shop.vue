@@ -82,7 +82,7 @@
       >
         <div class="card-top">
           <div class="weapon-image-wrapper">
-            <img v-if="weapon.image" :src="weapon.image" :alt="weapon.name" class="weapon-image" />
+            <img v-if="getWeaponImage(key, weapon)" :src="getWeaponImage(key, weapon)" :alt="weapon.name" class="weapon-image" />
             <Icon v-else icon="mdi:pistol" class="weapon-placeholder-icon" />
           </div>
           <h3 class="upgrade-name">
@@ -145,6 +145,10 @@ import { useRouter } from 'vue-router'
 import { useGameStore } from '../store/game'
 import { Icon } from '@iconify/vue'
 import { NButton, useMessage } from 'naive-ui'
+import defaultWeaponImg from '../assets/images/guns/regularpisto.png'
+import shotgunImg from '../assets/images/guns/xiandan.png'
+import smgImg from '../assets/images/guns/chongfeng.png'
+import sniperImg from '../assets/images/guns/juji.png'
 
 const router = useRouter()
 const gameStore = useGameStore()
@@ -152,6 +156,19 @@ const message = useMessage()
 
 // 当前激活的标签页
 const activeTab = ref<'upgrades' | 'weapons'>('upgrades')
+
+// 武器图片映射表，避免 localStorage 缓存导致旧的空路径覆盖新路径
+const weaponImages: Record<string, string> = {
+  pistol: defaultWeaponImg,
+  shotgun: shotgunImg,
+  smg: smgImg,
+  sniper: sniperImg
+}
+
+// 获取武器图片 (优先使用映射表，兼容本地存储中可能为空的情况)
+const getWeaponImage = (key: string | number, weapon: any) => {
+  return weaponImages[key as string] || weapon.image
+}
 
 // 返回主菜单
 const goBack = () => {

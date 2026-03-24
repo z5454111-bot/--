@@ -13,9 +13,8 @@
 
     <!-- 游戏标题 -->
     <h1 class="game-title">
-      <span class="title-word">Vampire</span>
-      <span class="title-word">Survivor</span>
-      <span class="title-word">Clone</span>
+      <span class="title-word">二组作业</span>
+      <span class="title-word">25建设本2(夏)</span>
     </h1>
     
     <!-- 菜单按钮组 -->
@@ -40,6 +39,16 @@
         商店
       </n-button>
       
+      <n-button
+        type="success"
+        size="large"
+        class="menu-btn"
+        @click="openAchievement"
+        @mouseenter="playHoverSound"
+      >
+        成就
+      </n-button>
+
       <n-button
         type="info"
         size="large"
@@ -68,6 +77,11 @@ const startGame = () => {
 // 打开商店
 const openShop = () => {
   router.push('/shop')
+}
+
+// 打开成就
+const openAchievement = () => {
+  router.push('/achievement')
 }
 
 // 打开致谢名单
@@ -118,7 +132,7 @@ const playHoverSound = async () => {
 }
 
 // 生成随机雪花粒子样式
-const getSnowStyle = (index: number) => {
+const getSnowStyle = (_index: number) => {
   const size = Math.random() * 3 + 1; // 1px - 4px，雪花比较小
   const left = Math.random() * 100; // 0% - 100%
   const duration = Math.random() * 10 + 10; // 10s - 20s，下落速度较慢
@@ -253,9 +267,8 @@ const getSnowStyle = (index: number) => {
   display: block;
 }
 
-.title-word:nth-child(1) { color: #ff4d4d; }
-.title-word:nth-child(2) { color: #e0e0e0; font-size: 4rem; }
-.title-word:nth-child(3) { color: #ffd700; font-size: 3rem; }
+.title-word:nth-child(1) { color: #ff4d4d; font-size: 4rem; }
+.title-word:nth-child(2) { color: #e0e0e0; font-size: 3rem; }
 
 @keyframes titlePulse {
   0% { transform: scale(1); text-shadow: 4px 4px 0px #4a0e4e, 0 0 20px rgba(170, 59, 255, 0.5); }

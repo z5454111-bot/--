@@ -103,7 +103,7 @@ export const useGameStore = defineStore('game', {
         baseCost: 0,
         upgradeCostMultiplier: 1.5,
         isOwned: true, // 默认拥有
-        image: '' // 留空，后续添加
+        image: '/src/assets/images/guns/regularpisto.png' // 使用项目中的手枪贴图
       } as Weapon,
       shotgun: {
         id: 'shotgun',
@@ -118,7 +118,7 @@ export const useGameStore = defineStore('game', {
         baseCost: 500,
         upgradeCostMultiplier: 1.6,
         isOwned: false,
-        image: ''
+        image: '/src/assets/images/guns/xiandan.png'
       } as Weapon,
       smg: {
         id: 'smg',
@@ -133,7 +133,7 @@ export const useGameStore = defineStore('game', {
         baseCost: 800,
         upgradeCostMultiplier: 1.7,
         isOwned: false,
-        image: ''
+        image: '/src/assets/images/guns/chongfeng.png'
       } as Weapon,
       sniper: {
         id: 'sniper',
@@ -141,44 +141,29 @@ export const useGameStore = defineStore('game', {
         description: '单发伤害极高，具有穿透效果。',
         level: 0,
         maxLevel: 5,
-        baseDamage: 50,
-        damagePerLevel: 20,
+        baseDamage: 150, // 大幅提高基础伤害
+        damagePerLevel: 50, // 提高成长伤害
         baseFireRate: 0.5,
         fireRatePerLevel: 0.1,
         baseCost: 1200,
         upgradeCostMultiplier: 1.8,
         isOwned: false,
-        image: ''
-      } as Weapon,
-      gatling: {
-        id: 'gatling',
-        name: '加特林',
-        description: '终极火力压制，移动速度会降低。',
-        level: 0,
-        maxLevel: 5,
-        baseDamage: 15,
-        damagePerLevel: 5,
-        baseFireRate: 15,
-        fireRatePerLevel: 3,
-        baseCost: 2500,
-        upgradeCostMultiplier: 2.0,
-        isOwned: false,
-        image: ''
+        image: '/src/assets/images/guns/juji.png'
       } as Weapon,
       rocket: {
         id: 'rocket',
-        name: '火箭炮',
-        description: '造成大范围爆炸伤害。',
+        name: '火箭筒',
+        description: '发射爆炸火箭弹，造成大范围伤害。',
         level: 0,
         maxLevel: 5,
-        baseDamage: 80,
+        baseDamage: 100,
         damagePerLevel: 30,
-        baseFireRate: 0.3,
+        baseFireRate: 0.3, // 射速很慢
         fireRatePerLevel: 0.05,
-        baseCost: 3000,
-        upgradeCostMultiplier: 2.2,
+        baseCost: 2000,
+        upgradeCostMultiplier: 2.0,
         isOwned: false,
-        image: ''
+        image: '/src/assets/images/guns/juji.png' // 暂时复用狙击枪图片，如果有火箭筒图片可以替换
       } as Weapon
     },
     // 当前装备的枪械 ID
