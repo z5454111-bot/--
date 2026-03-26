@@ -93,7 +93,8 @@ export class GameEngine {
     this.player.attackDamage = attackBonus
     
     // 初始冷却时间由武器决定
-    const weaponFireRate = this.store.getWeaponFireRate(weaponId)
+    // 如果商店中没有该武器的射速数据，则使用武器配置中的基础射速
+    const weaponFireRate = this.store.getWeaponFireRate(weaponId) || weaponConfig?.baseFireRate || 1
     this.player.attackCooldown = 1000 / weaponFireRate
 
     // 初始化刷新次数
@@ -421,7 +422,7 @@ export class GameEngine {
 
       // 处理爆炸逻辑
       if (isExploding && bullet.explosionRadius) {
-        this.triggerExplosion(bullet.x, bullet.y, bullet.explosionRadius, bullet.damage)
+        this.triggerExplosion(bullet.x, bullet.y, bullet.explosionRadius, bullet.damage, bullet.critTier)
       }
 
       if (shouldDestroyBullet) {
@@ -431,7 +432,7 @@ export class GameEngine {
   }
 
   // 触发爆炸
-  private triggerExplosion(x: number, y: number, radius: number, damage: number) {
+  private triggerExplosion(x: number, y: number, radius: number, damage: number, critTier: number = 0) {
     // 1. 生成爆炸特效粒子
     const particleCount = 30
     for (let p = 0; p < particleCount; p++) {
@@ -462,7 +463,7 @@ export class GameEngine {
         // 距离越近伤害越高，最低造成 50% 伤害
         const damageMultiplier = 0.5 + 0.5 * (1 - dist / (radius + monster.radius))
         const finalDamage = Math.floor(damage * damageMultiplier)
-        this.applyDamageToMonster(monster, finalDamage, j)
+        this.applyDamageToMonster(monster, finalDamage, j, critTier)
       }
     }
   }

@@ -164,6 +164,21 @@ export const useGameStore = defineStore('game', {
         upgradeCostMultiplier: 2.0,
         isOwned: false,
         image: '/src/assets/images/guns/juji.png' // 暂时复用狙击枪图片，如果有火箭筒图片可以替换
+      } as Weapon,
+      gatling: {
+        id: 'gatling',
+        name: '加特林',
+        description: '射速极快，火力压制，但散射较大。',
+        level: 0,
+        maxLevel: 5,
+        baseDamage: 8,
+        damagePerLevel: 3,
+        baseFireRate: 15,
+        fireRatePerLevel: 3,
+        baseCost: 2500,
+        upgradeCostMultiplier: 2.2,
+        isOwned: false,
+        image: '/src/assets/images/guns/chongfeng.png' // 暂时复用冲锋枪图片
       } as Weapon
     },
     // 当前装备的枪械 ID

@@ -3,6 +3,7 @@ import { shotgunConfig } from './shotgun'
 import { smgConfig } from './smg'
 import { sniperConfig } from './sniper'
 import { rocketConfig } from './rocket'
+import { gatlingConfig } from './gatling'
 import type { WeaponConfig } from '../types'
 
 export const weapons: Record<string, WeaponConfig> = {
@@ -10,7 +11,8 @@ export const weapons: Record<string, WeaponConfig> = {
   shotgun: shotgunConfig,
   smg: smgConfig,
   sniper: sniperConfig,
-  rocket: rocketConfig
+  rocket: rocketConfig,
+  gatling: gatlingConfig
 }
 
 // Warframe 式暴击计算逻辑

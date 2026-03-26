@@ -162,7 +162,8 @@ const weaponImages: Record<string, string> = {
   pistol: defaultWeaponImg,
   shotgun: shotgunImg,
   smg: smgImg,
-  sniper: sniperImg
+  sniper: sniperImg,
+  gatling: smgImg // 暂时复用冲锋枪图片
 }
 
 // 获取武器图片 (优先使用映射表，兼容本地存储中可能为空的情况)
